@@ -42,7 +42,9 @@
   nav a{text-decoration:none;border-bottom:2px solid transparent;padding-bottom:3px;}
   nav a:hover{border-color:var(--g-c);}
   @media (min-width:900px){ nav{display:flex;} }
-  .head-actions{display:flex;align-items:center;gap:16px;}
+  .head-actions{display:flex;align-items:center;gap:12px;flex-wrap:wrap;justify-content:flex-end;}
+  .btn-mail{display:none;}
+  @media (min-width:560px){ .btn-mail{display:inline-flex;} }
   .phone-pill{display:none;font-weight:700;font-size:14.5px;color:var(--navy);}
   @media (min-width:640px){ .phone-pill{display:inline;} }
   .btn{font-family:var(--font-body);font-weight:700;font-size:14px;text-decoration:none;display:inline-flex;align-items:center;gap:8px;padding:12px 20px;border-radius:8px;cursor:pointer;border:1.5px solid var(--navy);background:none;color:var(--navy);}
@@ -178,6 +180,7 @@
     </nav>
     <div class="head-actions">
       <span class="phone-pill">06 25 04 17 59</span>
+      <a class="btn btn-mail" href="mailto:bpa-diagnostics@hotmail.com?subject=Contact%20depuis%20le%20site&amp;body=Bonjour%20Monsieur%20Chatard%2C%0A%0A%0A%0ACordialement%2C">Envoyer un mail</a>
       <a class="btn btn-solid" href="#devis">Demander un devis</a>
       <button class="menu-btn" id="menuBtn" aria-label="Ouvrir le menu" aria-expanded="false">
         <svg width="16" height="16" viewBox="0 0 18 18" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"><line x1="1" y1="4" x2="17" y2="4"/><line x1="1" y1="9" x2="17" y2="9"/><line x1="1" y1="14" x2="17" y2="14"/></svg>
@@ -188,6 +191,7 @@
     <a href="#diagnostics">Diagnostics</a>
     <a href="#zone">Zone d'intervention</a>
     <a href="#faq">Questions</a>
+    <a href="mailto:bpa-diagnostics@hotmail.com?subject=Contact%20depuis%20le%20site&amp;body=Bonjour%20Monsieur%20Chatard%2C%0A%0A%0A%0ACordialement%2C">Envoyer un mail</a>
     <a href="#devis">Demander un devis</a>
   </div>
 </header>
