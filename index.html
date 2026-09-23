@@ -1,3 +1,7 @@
+<!doctype html>
+<html lang="fr">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>BPA Diagnostics</title>
 <style>
   @import url('https://fonts.googleapis.com/css2?family=Archivo:wght@500;600;700;800&family=Public+Sans:wght@400;500;600&display=swap');
@@ -483,3 +487,92 @@
   }catch(err){ document.querySelectorAll('.reveal').forEach(function(el){ el.classList.add('in'); }); }
 })();
 </script>
+
+<style>
+  /* ===== Téléphone uniquement : affichage agrandi ===== */
+  @media (max-width:640px){
+    .wrap{padding-inline:18px;}
+    .spectrum{height:6px;}
+    .headbar{padding-block:12px;gap:10px;}
+    .brand{gap:10px;}
+    .brand img{height:44px;}
+    .brand .name{font-size:21px;}
+    .menu-btn{padding:12px 13px;}
+    .head-actions .btn-mail{display:none;}
+    .head-actions .btn-solid{font-size:15px;padding:12px 16px;}
+    .menu-btn svg{width:22px;height:22px;}
+    .mobile-nav{gap:4px;padding:6px 0 18px;}
+    .mobile-nav a{font-size:19px;padding:12px 0;border-bottom:1px solid var(--line);}
+    .mobile-nav a:last-child{border-bottom:none;}
+
+    .btn{font-size:16.5px;padding:15px 22px;border-radius:10px;}
+    .hero{padding-block:40px 36px;}
+    .eyebrow{font-size:14.5px;line-height:1.4;}
+    .hero h1{font-size:33px;line-height:1.18;}
+    .hero .lede{font-size:19px;}
+    .hero-ctas .btn{flex:1 1 100%;justify-content:center;}
+    .card-visual img{max-width:100%;transform:rotate(-1.5deg);}
+
+    section{padding-block:52px;}
+    .section-head{margin-bottom:30px;}
+    .kicker{font-size:14.5px;}
+    .section-head h2{font-size:30px;line-height:1.2;}
+    .section-head .lede{font-size:18px;}
+
+    .filters{gap:10px;}
+    .filter-btn{font-size:16px;padding:11px 20px;}
+    .diag-grid{grid-template-columns:1fr;gap:16px;}
+    .diag-card{padding:24px 22px;gap:14px;}
+    .diag-icon{width:48px;height:48px;border-radius:12px;}
+    .diag-icon svg{width:26px;height:26px;}
+    .diag-card h3{font-size:21px;}
+    .diag-card p{font-size:17px;}
+    .tag{font-size:13.5px;padding:6px 13px;}
+
+    .why-grid{gap:30px;}
+    .why-num{font-size:15px;}
+    .why-card h3{font-size:21px;}
+    .why-card p{font-size:17px;}
+
+    .route-list li{padding:15px 0 15px 28px;}
+    .route-list li::before{top:22px;}
+    .route-list .town{font-size:19px;display:block;}
+    .route-list .dept{font-size:14.5px;margin-left:0;}
+    .zone-note{padding:24px 22px;}
+    .zone-note h3{font-size:21px;}
+    .zone-note p{font-size:17px;}
+
+    .devis-info h3{font-size:21px;margin-top:22px;}
+    .devis-info p{font-size:17px;}
+    .contact-line{flex-direction:column;gap:3px;font-size:18px;margin-top:18px;}
+    .contact-line span:first-child{font-size:13px;}
+    .contact-line span:last-child{overflow-wrap:anywhere;}
+    .mail-chip{font-size:16px;padding:13px 18px;}
+    form{padding:24px 20px;}
+    label{font-size:15px;}
+    input,select,textarea{font-size:17px;padding:14px 14px;border-radius:10px;}
+    legend{font-size:15px;}
+    .check-grid{grid-template-columns:1fr;gap:14px;}
+    .check-item{font-size:17px;gap:12px;}
+    .check-item input{width:22px;height:22px;}
+    .form-submit .btn{flex:1 1 100%;justify-content:center;}
+    .form-note{font-size:14px;}
+    .confirm{font-size:16px;}
+
+    .faq-q{font-size:18px;padding:22px 0;}
+    .faq-q .plus{font-size:24px;}
+    .faq-a p{font-size:17px;}
+    .faq-item.open .faq-a{max-height:420px;}
+
+    footer{padding-block:44px;}
+    footer p{font-size:16.5px;}
+    .foot-col h4{font-size:14px;}
+    .foot-col a,.foot-col span{font-size:17.5px!important;margin-bottom:12px;overflow-wrap:anywhere;}
+    .legal{font-size:14px;flex-direction:column;}
+  }
+  /* Très petits écrans : le bouton devis passe dans le menu pour éviter le débordement */
+  @media (max-width:480px){
+    .head-actions .btn-solid{display:none;}
+    .head-actions .btn-mail{display:none;}
+  }
+</style>
