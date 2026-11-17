@@ -606,11 +606,11 @@
     var d=collect();
     var payload=Object.assign({
       _subject:'Nouvelle demande de devis — '+d['Nom']+' ('+d['Transaction']+', '+d['Commune du bien']+')',
-      _template:'table',_captcha:'false'
+      _template:'table',_captcha:'false',_cc:'contact@bpa-diagnostics.fr'
     },d);
     if(val('email')) payload._replyto=val('email');
     submitBtn.disabled=true; var label=submitBtn.textContent; submitBtn.textContent='Envoi en cours…';
-    fetch('https://formsubmit.co/ajax/contact@bpa-diagnostics.fr',{
+    fetch('https://formsubmit.co/ajax/bpa-diagnostics@hotmail.com',{
       method:'POST',headers:{'Content-Type':'application/json','Accept':'application/json'},body:JSON.stringify(payload)
     }).then(function(r){ return r.json().then(function(j){ return {ok:r.ok,j:j}; }); })
     .then(function(res){
