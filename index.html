@@ -138,6 +138,10 @@
   .check-item input{width:auto;}
   .form-submit{display:flex;align-items:center;gap:16px;flex-wrap:wrap;margin-top:6px;}
   .form-note{font-size:12px;color:var(--ink-soft);}
+  .hp{position:absolute!important;left:-9999px!important;width:1px;height:1px;opacity:0;}
+  .confirm.error{background:#FDECEA!important;color:#9B2C22!important;border-color:#F3B8B1!important;}
+  .confirm a{color:inherit;font-weight:600;text-decoration:underline;}
+  .btn[disabled]{opacity:.6;cursor:wait;}
   .confirm{display:none;border-radius:10px;background:#EEF3FB;border:1.5px solid var(--blue);padding:16px;margin-top:18px;font-size:14px;}
   .confirm.show{display:block;}
 
@@ -363,7 +367,8 @@
             <div class="mail-objects" id="mailObjects"></div>
           </div>
         </div>
-        <form id="devisForm">
+        <form id="devisForm" novalidate>
+          <input type="text" name="_honey" class="hp" tabindex="-1" autocomplete="off" aria-hidden="true">
           <div class="form-row two">
             <div><label for="type-bien">Type de bien</label>
               <select id="type-bien"><option>Maison</option><option>Appartement</option><option>Local professionnel</option><option>Immeuble</option></select>
@@ -396,15 +401,16 @@
             </div>
           </fieldset>
           <div class="form-row two">
-            <div><label for="nom">Nom</label><input id="nom" type="text" required></div>
-            <div><label for="tel">Téléphone</label><input id="tel" type="tel" required></div>
+            <div><label for="nom">Nom *</label><input id="nom" type="text" autocomplete="name" required></div>
+            <div><label for="tel">Téléphone *</label><input id="tel" type="tel" autocomplete="tel" required></div>
           </div>
+          <div class="form-row"><div><label for="email">Email (facultatif, pour recevoir le devis)</label><input id="email" type="email" autocomplete="email" placeholder="ex. nom@email.fr"></div></div>
           <div class="form-row"><div><label for="message">Précisions (date souhaitée, contexte...)</label><textarea id="message" rows="3"></textarea></div></div>
           <div class="form-submit">
             <button type="submit" class="btn btn-solid">Envoyer la demande</button>
-            <span class="form-note">Aperçu — formulaire non encore connecté à un envoi réel.</span>
+            <span class="form-note">* Champs obligatoires. Vos informations servent uniquement à vous recontacter pour ce devis.</span>
           </div>
-          <div class="confirm" id="confirmMsg">Demande enregistrée. En version finale, une confirmation par email et un rappel de Philippe seraient déclenchés ici.</div>
+          <div class="confirm" id="confirmMsg" role="status" aria-live="polite"></div>
         </form>
       </div>
     </div>
@@ -554,10 +560,69 @@
 
   var form=document.getElementById('devisForm');
   var confirmMsg=document.getElementById('confirmMsg');
-  form.addEventListener('submit',function(e){
-    e.preventDefault();
+  var submitBtn=form.querySelector('button[type="submit"]');
+  (function(){
+    var boxes=form.querySelectorAll('.check-grid input[type="checkbox"]');
+    var unsure=boxes[boxes.length-1];
+    boxes.forEach(function(c){ c.addEventListener('change',function(){
+      if(c===unsure){ if(c.checked) boxes.forEach(function(o){ if(o!==unsure) o.checked=false; }); }
+      else if(c.checked){ unsure.checked=false; }
+    }); });
+  })();
+  function val(id){ var el=document.getElementById(id); return el?el.value.trim():''; }
+  function showMsg(html,isError){
+    confirmMsg.innerHTML=html;
+    confirmMsg.classList.toggle('error',!!isError);
     confirmMsg.classList.add('show');
     confirmMsg.scrollIntoView({behavior:'smooth',block:'nearest'});
+  }
+  function collect(){
+    var diags=[];
+    form.querySelectorAll('.check-grid input[type="checkbox"]').forEach(function(c){ if(c.checked) diags.push(c.parentNode.textContent.trim()); });
+    return {
+      'Nom':val('nom'),'Téléphone':val('tel'),'Email':val('email')||'Non renseigné',
+      'Type de bien':val('type-bien'),'Transaction':val('transaction'),
+      'Date du permis de construire':val('permis')||'Non renseignée',
+      'Surface habitable (m²)':val('surface')||'Non renseignée',
+      'Commune du bien':val('commune')||'Non renseignée',
+      'Diagnostics souhaités':diags.length?diags.join(', '):'Non précisé',
+      'Précisions':val('message')||'—'
+    };
+  }
+  function mailtoFallback(d){
+    var body='Bonjour Monsieur Chatard,\n\nJe souhaite obtenir un devis :\n\n'+Object.keys(d).map(function(k){return k+' : '+d[k];}).join('\n')+'\n\nCordialement,';
+    return 'mailto:contact@bpa-diagnostics.fr?subject='+encodeURIComponent('Demande de devis — '+d['Nom'])+'&body='+encodeURIComponent(body);
+  }
+  form.addEventListener('submit',function(e){
+    e.preventDefault();
+    if(form.querySelector('.hp').value){ return; }
+    if(!val('nom')||!val('tel')){
+      showMsg('Merci d\u2019indiquer votre nom et votre téléphone pour que Philippe puisse vous rappeler.',true);
+      (val('nom')?document.getElementById('tel'):document.getElementById('nom')).focus();
+      return;
+    }
+    var em=document.getElementById('email');
+    if(em.value.trim() && !em.checkValidity()){ showMsg('L\u2019adresse email ne semble pas valide.',true); em.focus(); return; }
+    var d=collect();
+    var payload=Object.assign({
+      _subject:'Nouvelle demande de devis — '+d['Nom']+' ('+d['Transaction']+', '+d['Commune du bien']+')',
+      _template:'table',_captcha:'false'
+    },d);
+    if(val('email')) payload._replyto=val('email');
+    submitBtn.disabled=true; var label=submitBtn.textContent; submitBtn.textContent='Envoi en cours…';
+    fetch('https://formsubmit.co/ajax/contact@bpa-diagnostics.fr',{
+      method:'POST',headers:{'Content-Type':'application/json','Accept':'application/json'},body:JSON.stringify(payload)
+    }).then(function(r){ return r.json().then(function(j){ return {ok:r.ok,j:j}; }); })
+    .then(function(res){
+      if(res.ok && String(res.j.success)==='true'){
+        form.reset();
+        showMsg('<strong>Merci, votre demande a bien été envoyée.</strong> Philippe vous recontacte rapidement pour votre devis.',false);
+      } else { throw new Error(res.j && res.j.message); }
+    })
+    .catch(function(){
+      showMsg('L\u2019envoi n\u2019a pas fonctionné. <a href="'+mailtoFallback(d)+'">Cliquez ici pour envoyer votre demande par email</a> ou appelez le <a href="tel:+33625041759">06 25 04 17 59</a>.',true);
+    })
+    .then(function(){ submitBtn.disabled=false; submitBtn.textContent=label; });
   });
 
   try{
